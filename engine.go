@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/subins2000/semoji/ibus"
 
@@ -18,34 +17,6 @@ type SemojiEngine struct {
 	table             *ibus.LookupTable
 	transliterateCTX  context.Context
 	updateTableCancel context.CancelFunc
-}
-
-type Emoji struct {
-	Symbol      string
-	Name        string
-	Description string
-	Keywords    []string
-}
-
-var emojiTable = []Emoji{
-	{
-		Symbol:      "😀",
-		Name:        "grinning",
-		Description: "Grinning face",
-		Keywords:    []string{"smile", "happy", "joy", "grin"},
-	},
-	{
-		Symbol:      "🔥",
-		Name:        "fire",
-		Description: "Fire emoji",
-		Keywords:    []string{"hot", "lit", "flame"},
-	},
-	{
-		Symbol:      "🎉",
-		Name:        "party popper",
-		Description: "Celebration or party",
-		Keywords:    []string{"celebrate", "party", "yay"},
-	},
 }
 
 func (e *SemojiEngine) SemojiUpdatePreedit() {
@@ -64,29 +35,17 @@ func (e *SemojiEngine) SemojiClearState() {
 func (e *SemojiEngine) SemojiCommitText(text *ibus.Text, shouldLearn bool) bool {
 	e.CommitText(text)
 	e.SemojiClearState()
+
+	bus := ibus.NewBus()
+	bus.CallMethod("PrevEngine", 1)
+
 	return true
 }
 
-func getSuggestions(ctx context.Context, channel chan<- []string, query string) {
-	result := []string{}
-
-	for _, emoji := range emojiTable {
-		for _, keyword := range emoji.Keywords {
-			if strings.Contains(strings.ToLower(keyword), query) {
-				result = append(result, emoji.Symbol)
-				break
-			}
-		}
-	}
-
-	channel <- result
-	close(channel)
-}
-
 func (e *SemojiEngine) InternalUpdateTable(ctx context.Context) {
-	resultChannel := make(chan []string)
+	resultChannel := make(chan []Emoji)
 
-	go getSuggestions(ctx, resultChannel, string(e.preedit))
+	go getEmojiSuggestions(ctx, resultChannel, string(e.preedit))
 
 	select {
 	case <-ctx.Done():
@@ -95,7 +54,7 @@ func (e *SemojiEngine) InternalUpdateTable(ctx context.Context) {
 		e.table.Clear()
 
 		for _, suggestion := range result {
-			e.table.AppendCandidate(suggestion)
+			e.table.AppendCandidate(suggestion.Emoji)
 		}
 
 		label := uint32(1)
@@ -205,14 +164,14 @@ func (e *SemojiEngine) ProcessKeyEvent(keyval uint32, keycode uint32, modifiers 
 	}
 
 	switch keyval {
-	case ibus.IBUS_Space:
-		text := e.GetCandidate()
-		if text == nil {
-			e.SemojiCommitText(ibus.NewText(string(e.preedit)+" "), false)
-		} else {
-			e.SemojiCommitText(ibus.NewText(text.Text+" "), true)
-		}
-		return true, nil
+	// case ibus.IBUS_Space:
+	// 	text := e.GetCandidate()
+	// 	if text == nil {
+	// 		e.SemojiCommitText(ibus.NewText(string(e.preedit)+" "), false)
+	// 	} else {
+	// 		e.SemojiCommitText(ibus.NewText(text.Text+" "), true)
+	// 	}
+	// 	return true, nil
 
 	case ibus.IBUS_Return:
 		text := e.GetCandidate()
@@ -438,6 +397,9 @@ func SemojiEngineCreator(conn *dbus.Conn, engineName string) dbus.ObjectPath {
 	// engine.table.emitSignal("SetOrientation", ibus.IBUS_ORIENTATION_VERTICAL)
 
 	ibus.PublishEngine(conn, objectPath, engine)
+
+	populateEmojiTable()
+
 	return objectPath
 }
 

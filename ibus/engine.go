@@ -29,92 +29,92 @@ func (e *Engine) GetAll(iface string) (map[string]dbus.Variant, *dbus.Error) {
 	return items, nil
 }
 
-//@method(in_signature="uuu", out_signature="b")
+// @method(in_signature="uuu", out_signature="b")
 func (e *Engine) ProcessKeyEvent(keyval uint32, keycode uint32, state uint32) (bool, *dbus.Error) {
 	return false, nil
 }
 
-//@method(in_signature="iiii")
+// @method(in_signature="iiii")
 func (e *Engine) SetCursorLocation(x int32, y int32, w int32, h int32) *dbus.Error {
 	return nil
 }
 
-//@method(in_signature="vuu")
+// @method(in_signature="vuu")
 func (e *Engine) SetSurroundingText(text dbus.Variant, cursor_index uint32, anchor_pos uint32) *dbus.Error {
 	return nil
 }
 
-//@method(in_signature="u")
+// @method(in_signature="u")
 func (e *Engine) SetCapabilities(cap uint32) *dbus.Error {
 	return nil
 }
 
-//@method()
+// @method()
 func (e *Engine) FocusIn() *dbus.Error {
 	return nil
 }
 
-//@method()
+// @method()
 func (e *Engine) FocusOut() *dbus.Error {
 	return nil
 }
 
-//@method()
+// @method()
 func (e *Engine) Reset() *dbus.Error {
 	return nil
 }
 
-//@method()
+// @method()
 func (e *Engine) PageUp() *dbus.Error {
 	return nil
 }
 
-//@method()
+// @method()
 func (e *Engine) PageDown() *dbus.Error {
 	return nil
 }
 
-//@method()
+// @method()
 func (e *Engine) CursorUp() *dbus.Error {
 	return nil
 }
 
-//@method()
+// @method()
 func (e *Engine) CursorDown() *dbus.Error {
 	return nil
 }
 
-//@method(in_signature="uuu")
+// @method(in_signature="uuu")
 func (e *Engine) CandidateClicked(index uint32, button uint32, state uint32) *dbus.Error {
 	return nil
 }
 
-//@method()
+// @method()
 func (e *Engine) Enable() *dbus.Error {
 	return nil
 }
 
-//@method()
+// @method()
 func (e *Engine) Disable() *dbus.Error {
 	return nil
 }
 
-//@method(in_signature="su")
+// @method(in_signature="su")
 func (e *Engine) PropertyActivate(prop_name string, prop_state uint32) *dbus.Error {
 	return nil
 }
 
-//@method(in_signature="s")
+// @method(in_signature="s")
 func (e *Engine) PropertyShow(prop_name string) *dbus.Error {
 	return nil
 }
 
-//@method(in_signature="s")
+// @method(in_signature="s")
 func (e *Engine) PropertyHide(prop_name string) *dbus.Error {
 	return nil
 }
 
-//@method()
+// @method()
 func (e *Engine) Destroy() *dbus.Error {
 	e.conn.Export(nil, e.objectPath, IBUS_IFACE_ENGINE)
 	e.conn.Export(nil, e.objectPath, IBUS_IFACE_SERVICE)
@@ -122,17 +122,17 @@ func (e *Engine) Destroy() *dbus.Error {
 	return nil
 }
 
-//@signal(signature="v")
+// @signal(signature="v")
 func (e *Engine) CommitText(text *Text) {
 	e.emitSignal("CommitText", dbus.MakeVariant(*text))
 }
 
-//@signal(signature="uuu")
+// @signal(signature="uuu")
 func (e *Engine) ForwardKeyEvent(keyval uint32, keycode uint32, state uint32) {
 	e.emitSignal("ForwardKeyEvent", keyval, keycode, state)
 }
 
-//@signal(signature="vubu")
+// @signal(signature="vubu")
 func (e *Engine) UpdatePreeditText(text *Text, cursor_pos uint32, visible bool) {
 	e.emitSignal("UpdatePreeditText", dbus.MakeVariant(*text), cursor_pos, visible, IBUS_ENGINE_PREEDIT_CLEAR)
 }
@@ -140,82 +140,82 @@ func (e *Engine) UpdatePreeditTextWithMode(text *Text, cursor_pos uint32, visibl
 	e.emitSignal("UpdatePreeditText", dbus.MakeVariant(*text), cursor_pos, visible, mode)
 }
 
-//@signal()
+// @signal()
 func (e *Engine) ShowPreeditText() {
 	e.emitSignal("ShowPreeditText")
 }
 
-//@signal()
+// @signal()
 func (e *Engine) HidePreeditText() {
 	e.emitSignal("HidePreeditText")
 }
 
-//@signal(signature="vb")
+// @signal(signature="vb")
 func (e *Engine) UpdateAuxiliaryText(text *Text, visible bool) {
 	e.emitSignal("UpdateAuxiliaryText", dbus.MakeVariant(*text), visible)
 }
 
-//@signal()
+// @signal()
 func (e *Engine) ShowAuxiliaryText() {
 	e.emitSignal("ShowAuxiliaryText")
 }
 
-//@signal()
+// @signal()
 func (e *Engine) HideAuxiliaryText() {
 	e.emitSignal("HideAuxiliaryText")
 }
 
-//@signal(signature="vb")
+// @signal(signature="vb")
 func (e *Engine) UpdateLookupTable(lookup_table *LookupTable, visible bool) {
 	e.emitSignal("UpdateLookupTable", dbus.MakeVariant(*lookup_table), visible)
 }
 
-//@signal()
+// @signal()
 func (e *Engine) ShowLookupTable() {
 	e.emitSignal("ShowLookupTable")
 }
 
-//@signal()
+// @signal()
 func (e *Engine) HideLookupTable() {
 	e.emitSignal("HideLookupTable")
 }
 
-//@signal()
+// @signal()
 func (e *Engine) PageUpLookupTable() {
 	e.emitSignal("PageUpLookupTable")
 }
 
-//@signal()
+// @signal()
 func (e *Engine) PageDownLookupTable() {
 	e.emitSignal("PageDownLookupTable")
 }
 
-//@signal()
+// @signal()
 func (e *Engine) CursorUpLookupTable() {
 	e.emitSignal("CursorUpLookupTable")
 }
 
-//@signal()
+// @signal()
 func (e *Engine) CursorDownLookupTable() {
 	e.emitSignal("CursorDownLookupTable")
 }
 
-//@signal(signature="v")
+// @signal(signature="v")
 func (e *Engine) RegisterProperties(props *PropList) {
 	e.emitSignal("RegisterProperties", dbus.MakeVariant(*props))
 }
 
-//@signal(signature="v")
+// @signal(signature="v")
 func (e *Engine) UpdateProperty(prop *Property) {
 	e.emitSignal("UpdateProperty", dbus.MakeVariant(*prop))
 }
 
-//@signal(signature="iu")
+// @signal(signature="iu")
 func (e *Engine) DeleteSurroundingText(offset_from_cursor int32, nchars uint32) {
 	e.emitSignal("DeleteSurroundingText", offset_from_cursor, nchars)
 }
 
-//@signal()
+// @signal()
 func (e *Engine) RequireSurroundingText() {
 	e.emitSignal("RequireSurroundingText")
 }
